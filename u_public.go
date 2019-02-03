@@ -40,6 +40,7 @@ type TLS13OnlyState struct {
 	SentDummyCCS  bool
 	Transcript    hash.Hash
 	TrafficSecret []byte // client_application_traffic_secret_0
+	CertCompAlgs  []CertificateCompressionAlgorithm
 }
 
 // TLS 1.2 and before only
@@ -69,6 +70,7 @@ func (chs *ClientHandshakeState) toPrivate13() *clientHandshakeStateTLS13 {
 			transcript:    chs.State13.Transcript,
 			masterSecret:  chs.MasterSecret,
 			trafficSecret: chs.State13.TrafficSecret,
+			certCompAlgs:  chs.State13.CertCompAlgs,
 		}
 	}
 }
@@ -87,6 +89,7 @@ func (chs13 *clientHandshakeStateTLS13) toPublic13() *ClientHandshakeState {
 			Suite:         chs13.suite.toPublic(),
 			TrafficSecret: chs13.trafficSecret,
 			Transcript:    chs13.transcript,
+			CertCompAlgs:  chs13.certCompAlgs,
 		}
 		return &ClientHandshakeState{
 			C:           chs13.c,

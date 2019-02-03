@@ -684,5 +684,4 @@ func (e *SupportedVersionsExtension) Read(b []byte) (int, error) {
 	return e.Len(), io.EOF
 }
 
-// TODO: FakeCertificateCompressionAlgorithmsExtension
 // TODO: FakeRecordSizeLimitExtension

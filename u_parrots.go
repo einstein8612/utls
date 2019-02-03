@@ -136,7 +136,9 @@ func utlsIdToSpec(id ClientHelloID) (ClientHelloSpec, error) {
 					CurveP256,
 					CurveP384,
 				}},
-				&GenericExtension{id: fakeCertCompressionAlgs, data: []byte{02, 00, 02}},
+				&CompressCertificateExtension{
+					Algorithms: []CertificateCompressionAlgorithm{CompressionBrotli},
+				},
 				&UtlsGREASEExtension{},
 				&UtlsPaddingExtension{GetPaddingLen: BoringPaddingStyle},
 			},
@@ -488,6 +490,8 @@ func (uconn *UConn) ApplyPreset(p *ClientHelloSpec) error {
 					ext.Versions[i] = GetBoringGREASEValue(uconn.greaseSeed, ssl_grease_version)
 				}
 			}
+		case *CompressCertificateExtension:
+			uconn.HandshakeState.State13.CertCompAlgs = ext.Algorithms
 		}
 	}
 	return nil
