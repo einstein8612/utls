@@ -74,7 +74,6 @@ const (
 	helloFirefox    = "Firefox"
 	helloChrome     = "Chrome"
 	helloIOS        = "iOS"
-	helloAndroid    = "Android"
 )
 
 const (
@@ -124,6 +123,7 @@ var (
 	HelloChrome_58   = ClientHelloID{helloChrome, 58}
 	HelloChrome_62   = ClientHelloID{helloChrome, 62}
 	HelloChrome_70   = ClientHelloID{helloChrome, 70}
+	HelloChrome_71   = ClientHelloID{helloChrome, 71}
 
 	HelloIOS_Auto = HelloIOS_11_1
 	HelloIOS_11_1 = ClientHelloID{helloIOS, 111}
