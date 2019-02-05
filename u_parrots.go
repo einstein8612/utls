@@ -678,10 +678,7 @@ func (uconn *UConn) generateRandomizedSpec(WithALPN bool) (ClientHelloSpec, erro
 			{Group: X25519}, // the key for the group will be generated later
 		}}
 		if tossBiasedCoin(0.25) {
-			// do not ADD second keyShare because crypto/tls does not support multiple ecdheParams
-			// TODO: add it back when they implement multiple keyShares, or implement it oursevles
-			// ks.KeyShares = append(ks.KeyShares, KeyShare{Group: CurveP256})
-			ks.KeyShares[0].Group = CurveP256
+			ks.KeyShares = append(ks.KeyShares, KeyShare{Group: CurveP256})
 		}
 		pskExchangeModes := PSKKeyExchangeModesExtension{[]uint8{pskModeDHE}}
 		supportedVersionsExt := SupportedVersionsExtension{
