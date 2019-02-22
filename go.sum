@@ -1,3 +1,5 @@
+git.schwanenlied.me/yawning/bsaes.git v0.0.0-20190222205624-e466e3c35f68 h1:HMSCyJHijmpCUtrbqXJcgc9LLmSAOphAbkbt7TlLfAE=
+git.schwanenlied.me/yawning/bsaes.git v0.0.0-20190222205624-e466e3c35f68/go.mod h1:BWqTsj8PgcPriQJGl7el20J/7TuT1d/hSyFDXMEpoEo=
 github.com/dsnet/compress v0.0.0-20171208185109-cc9eb1d7ad76 h1:eX+pdPPlD279OWgdx7f6KqIRSONuK7egk+jDx7OM3Ac=
 github.com/dsnet/compress v0.0.0-20171208185109-cc9eb1d7ad76/go.mod h1:KjxHHirfLaw19iGT70HvVjHQsL1vq1SRQB4yOsAfy2s=
 golang.org/x/crypto v0.0.0-20190131182504-b8fe1690c613 h1:MQ/ZZiDsUapFFiMS+vzwXkCTeEKaum+Do5rINYJDmxc=
