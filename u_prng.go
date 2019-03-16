@@ -14,11 +14,12 @@ package tls
 import (
 	crypto_rand "crypto/rand"
 	"encoding/binary"
+	"io"
 	"math"
 	"math/rand"
 	"sync"
 
-	"github.com/Yawning/chacha20"
+	"golang.org/x/crypto/sha3"
 )
 
 const (
@@ -38,29 +39,23 @@ func NewPRNGSeed() (*PRNGSeed, error) {
 	return seed, nil
 }
 
-// prng is a seeded, unbiased PRNG based on chacha20. that is suitable for use
+// prng is a seeded, unbiased PRNG based on SHAKE256 that is suitable for use
 // cases such as obfuscation.
 //
-// Seeding is based on crypto/rand.Read and the PRNG stream is provided by
-// chacha20.
+// Seeding is based on crypto/rand.Read.
 //
 // This PRNG is _not_ for security use cases including production cryptographic
 // key generation.
-//
-// Limitations: there is a cycle in the PRNG stream, after roughly 2^64 * 2^38-64
-// bytes.
 //
 // It is safe to make concurrent calls to a PRNG instance.
 //
 // PRNG conforms to io.Reader and math/rand.Source, with additional helper
 // functions.
 type prng struct {
-	rand                   *rand.Rand
-	randomStreamMutex      sync.Mutex
-	randomStreamSeed       *PRNGSeed
-	randomStream           *chacha20.Cipher
-	randomStreamUsed       uint64
-	randomStreamRekeyCount uint64
+	sync.Mutex
+
+	r    io.Reader
+	rand *rand.Rand
 }
 
 // newPRNG generates a seed and creates a PRNG with that seed.
@@ -74,10 +69,12 @@ func newPRNG() (*prng, error) {
 
 // newPRNGWithSeed initializes a new PRNG using an existing seed.
 func newPRNGWithSeed(seed *PRNGSeed) *prng {
+	h := sha3.NewShake256()
+	_, _ = h.Write(seed[:])
+
 	p := &prng{
-		randomStreamSeed: seed,
+		r: h,
 	}
-	p.rekey()
 	p.rand = rand.New(p)
 	return p
 }
@@ -85,50 +82,10 @@ func newPRNGWithSeed(seed *PRNGSeed) *prng {
 // Read reads random bytes from the PRNG stream into b. Read conforms to
 // io.Reader and always returns len(p), nil.
 func (p *prng) Read(b []byte) (int, error) {
+	p.Lock()
+	defer p.Unlock()
 
-	p.randomStreamMutex.Lock()
-	defer p.randomStreamMutex.Unlock()
-
-	// Re-key before reaching the 2^38-64 chacha20 key stream limit.
-	if p.randomStreamUsed+uint64(len(b)) >= uint64(1<<38-64) {
-		p.rekey()
-	}
-
-	p.randomStream.KeyStream(b)
-
-	p.randomStreamUsed += uint64(len(b))
-
-	return len(b), nil
-}
-
-func (p *prng) rekey() {
-
-	// chacha20 has a stream limit of 2^38-64. Before that limit is reached,
-	// the cipher must be rekeyed. To rekey without changing the seed, we use
-	// a counter for the nonce.
-	//
-	// Limitation: the counter wraps at 2^64, which produces a cycle in the
-	// PRNG after 2^64 * 2^38-64 bytes.
-	//
-	// TODO: this could be extended by using all 2^96 bits of the nonce for
-	// the counter; and even further by using the 24 byte XChaCha20 nonce.
-	var randomKeyNonce [12]byte
-	binary.BigEndian.PutUint64(randomKeyNonce[0:8], p.randomStreamRekeyCount)
-
-	var err error
-	p.randomStream, err = chacha20.NewCipher(
-		p.randomStreamSeed[:], randomKeyNonce[:])
-	if err != nil {
-		// Functions returning random values, which may call rekey, don't
-		// return an error. As of github.com/Yawning/chacha20 rev. e3b1f968,
-		// the only possible errors from chacha20.NewCipher invalid key or
-		// nonce size, and since we use the correct sizes, there should never
-		// be an error here. So panic in this unexpected case.
-		panic(err)
-	}
-
-	p.randomStreamRekeyCount += 1
-	p.randomStreamUsed = 0
+	return io.ReadFull(p.r, b)
 }
 
 // Int63 is equivilent to math/read.Int63.
