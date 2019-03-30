@@ -1,8 +1,9 @@
 module gitlab.com/yawning/utls.git
 
 require (
-	git.schwanenlied.me/yawning/bsaes.git v0.0.0-20190222205624-e466e3c35f68
-	github.com/dsnet/compress v0.0.0-20171208185109-cc9eb1d7ad76
-	golang.org/x/crypto v0.0.0-20190131182504-b8fe1690c613
-	golang.org/x/sys v0.0.0-20190201152629-afcc84fd7533 // indirect
+	git.schwanenlied.me/yawning/bsaes.git v0.0.0-20190320102049-26d1add596b6
+	github.com/dsnet/compress v0.0.1
+	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
+	golang.org/x/net v0.0.0-20190328230028-74de082e2cca
+	golang.org/x/sys v0.0.0-20190329044733-9eb1bfa1ce65 // indirect
 )
