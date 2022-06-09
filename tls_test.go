@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/yawning/utls.git/testenv"
+	"gitlab.com/einstein8612/utls/testenv"
 )
 
 var rsaCertPEM = `-----BEGIN CERTIFICATE-----
