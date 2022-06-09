@@ -158,7 +158,7 @@ func (c *Conn) encryptTicket(state []byte) ([]byte, error) {
 	}
 	key := c.config.ticketKeys()[0]
 	copy(keyName, key.keyName[:])
-	block, err := aes.NewCipher(key.aesKey[:])
+	block, err := aesNewCipher(key.aesKey[:])
 	if err != nil {
 		return nil, errors.New("tls: failed to create cipher while encrypting ticket: " + err.Error())
 	}
@@ -218,7 +218,7 @@ func DecryptTicketWith(encrypted []byte, tks TicketKeys) (plaintext []byte, used
 		return nil, false
 	}
 
-	block, err := aes.NewCipher(key.aesKey[:])
+	block, err := aesNewCipher(key.aesKey[:])
 	if err != nil {
 		return nil, false
 	}

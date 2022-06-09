@@ -32,6 +32,7 @@ type UConn struct {
 	greaseSeed [ssl_grease_last_index]uint16
 
 	omitSNIExtension bool
+	extCompressCerts bool
 }
 
 // UClient returns a new uTLS client, with behavior depending on clientHelloID.
@@ -72,7 +73,7 @@ func (uconn *UConn) BuildHandshakeState() error {
 		}
 
 		uconn.HandshakeState.Hello = hello.getPublicPtr()
-		uconn.HandshakeState.State13.EcdheParams = ecdheParams
+		uconn.HandshakeState.State13.EcdheParams = ecdheParamMapToPublic(ecdheParams)
 		uconn.HandshakeState.C = uconn.Conn
 	} else {
 		if !uconn.ClientHelloBuilt {
