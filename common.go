@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.com/yawning/utls.git/cpu"
+	"github.com/einstein8612/utls/cpu"
 )
 
 const (
